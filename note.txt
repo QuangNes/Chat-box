@@ -1,0 +1,3 @@
+should use id to qurey instead of class
+
+prefare to mirgrate to ReactJs
