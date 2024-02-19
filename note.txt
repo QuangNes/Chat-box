@@ -1,3 +1,5 @@
+OPENAI_API_KEY: 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 => need billing
+
 should use id to qurey instead of class
 
 prefare to mirgrate to ReactJs

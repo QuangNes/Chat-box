@@ -17,7 +17,7 @@ const createChatLi = (message,classname) => {
 }
 
 
-const handChat = () => {
+const handleChat = () => {
     userMessage = chatInput.value.trim();
     console.log(userMessage)
     if(!userMessage) return;
@@ -43,10 +43,10 @@ chatInput.addEventListener("input",() =>{
 chatInput.addEventListener("keydown",(e) =>{
     if(e.key === "Enter" && !e.shiftKey && window.innerWidth >800) {
         e.preventDefault();
-        handChat();
+        handleChat();
     }
 });
 
-sendChatBtn.addEventListener("click", handChat);
+sendChatBtn.addEventListener("click", handleChat);
 chatbotCloseBtn.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
 chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));
