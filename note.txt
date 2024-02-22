@@ -1,9 +1,5 @@
 train data using fine-tuning https://platform.openai.com/docs/guides/fine-tuning
 
-should use id to qurey instead of class
-
-prefare to mirgrate to ReactJs
-
 datasets:
 https://huggingface.co/datasets/math-ai/AutoMathText
 https://huggingface.co/datasets/dair-ai/emotion , https://huggingface.co/datasets/jkhedri/psychology-dataset

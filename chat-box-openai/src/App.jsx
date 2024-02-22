@@ -1,20 +1,27 @@
 import './App.css';
 import {React, useEffect, useRef, useState} from 'react'
 import OpenAI from 'openai'
+import AtomicSpinner from 'atomic-spinner'
 
 
 function App() {
   const [status, setStatus] = useState(false)
   const [showChatBox, setShowChatBox] = useState('')
   const [message, setMesage] = useState('')
-  const [messages, setMessages] = useState([{
-    content: "Hello, how can I help you today",
-    role: "assistant"
-  }])
+  const [messages, setMessages] = useState([
+    {
+      role: "system",
+      content: "You are a psychologist"
+    },
+    {
+      content: "Xin chào, đừng ngại nói với chúng tôi nếu bạn có gặp vấn đề gì nhé!",
+      role: "assistant"
+    }
+  ])
 
   const messagesEndRef = useRef(null)
   
-  const openai = new OpenAI({apiKey:"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", dangerouslyAllowBrowser:'yes', });
+  const openai = new OpenAI({apiKey:"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", dangerouslyAllowBrowser:'yes', });
 
   const toggleChatBox = (e) => {
     if (showChatBox.length === 0) setShowChatBox('show-chatbot');
@@ -25,21 +32,17 @@ function App() {
     console.log(e.key);
     if(e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      sendMessage(e);
     }
   }
 
   const sendMessage = (e) => {
-    const myMessage = message
+    console.log(`Sended message: ${message}`);
+
+    setMessages(prev => [...prev, {content: message, role: 'user'}])
+
     setMesage("")
-    console.log(`Sended message: ${myMessage}`);
-
-    setMessages(prev => [...prev, {content: myMessage, role: 'user'}])
-    // setMessages(prev => [...prev, {content: "Thinking ...", role: 'assistant'}])
-
     setStatus(true)
-
-    // setMessages(prev => [...prev, {content: completion.choices[0].message.content, role:'assistant'}]);
   }
 
   const scrollToBottom = () => {
@@ -50,7 +53,7 @@ function App() {
     if (status === true) {
       const completion = await openai.chat.completions.create({
         messages: messages,
-        model: "gpt-3.5-turbo-0613",
+        model: "ft:gpt-3.5-turbo-0613:personal::8v3ZLLUx",
       });
       setMessages(prev => [...prev, {content: completion.choices[0].message.content, role:'assistant'}]);
     }
@@ -66,7 +69,9 @@ function App() {
   }, [message])
 
   return (
-    <div className={showChatBox}>
+    <div className={`app ${showChatBox}`}>
+      <h1 className='title'>Chào mừng đến với phòng tư vấn tâm lý Bot</h1>
+
       <button className='chatbot-toggler' onClick={toggleChatBox}>
         <span className="material-symbols-outlined">mode_comment</span>
         <span className="material-symbols-outlined">close</span>
@@ -90,7 +95,7 @@ function App() {
                   </li>
                 )
               }
-              else 
+              else if (message.role === "user")
               {
                 return (
                   <li className='chat outgoing' key={index}>
@@ -100,9 +105,12 @@ function App() {
               }
             })
           }
+          { status && <li className='chat incoming'>
+            <span className="material-symbols-outlined">logo_dev</span>
+            <AtomicSpinner atomSize={30}/>
+          </li>}
           <div ref={messagesEndRef}></div>
         </ul>
-
         <div className="chat-input">
           <textarea value={message} onChange={(e) => setMesage(e.currentTarget.value)} onKeyDown={handleChatKeyDown} placeholder="Enter a message..." required></textarea>
           <span id ="send-btn" className="material-symbols-outlined" onClick={sendMessage}>send</span>

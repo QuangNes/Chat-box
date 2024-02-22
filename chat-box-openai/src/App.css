@@ -7,17 +7,26 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;1,300&display=swap');
-
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins",sans-serif;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: large;
 }
 
-body{
-  background: var(--color-background);
+.app {
+  background-image: url(https://cdn.pixabay.com/photo/2022/06/24/17/35/relaxation-7282116_1280.jpg);
+  background-size: contain;
+  background-repeat: round;
+  /* background-position-x: 130px; */
+  height: 100vh;
+}
+
+.title {
+  text-align: center;
+  font-size: 50px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .chatbot-toggler {
