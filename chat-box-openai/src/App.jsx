@@ -21,7 +21,7 @@ function App() {
 
   const messagesEndRef = useRef(null)
   
-  const openai = new OpenAI({apiKey:"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", dangerouslyAllowBrowser:'yes', });
+  const openai = new OpenAI({apiKey:"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", dangerouslyAllowBrowser:'yes', });
 
   const toggleChatBox = (e) => {
     if (showChatBox.length === 0) setShowChatBox('show-chatbot');
@@ -70,7 +70,7 @@ function App() {
 
   return (
     <div className={`app ${showChatBox}`}>
-      <h1 className='title'>Chào mừng đến với phòng tư vấn tâm lý Bot</h1>
+      <h1 className='title'>Tư Vấn Tâm Lý: Hỗ Trợ Bạn Trên Mọi Hành Trình</h1>
 
       <button className='chatbot-toggler' onClick={toggleChatBox}>
         <span className="material-symbols-outlined">mode_comment</span>

@@ -14,20 +14,29 @@
   font-family: 'Times New Roman', Times, serif;
   font-size: large;
 }
+/* background-image: url(https://cdn.pixabay.com/photo/2022/06/24/17/35/relaxation-7282116_1280.jpg); */
 
 .app {
-  background-image: url(https://cdn.pixabay.com/photo/2022/06/24/17/35/relaxation-7282116_1280.jpg);
-  background-size: contain;
-  background-repeat: round;
-  /* background-position-x: 130px; */
+  background-image: url(https://cdn.pixabay.com/photo/2023/11/14/06/55/awareness-8387036_1280.jpg);
+  background-color: rgb(215, 192, 163);
+  background-size:  100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment:  fixed;
+  background-position-y: 30px; 
   height: 100vh;
 }
+
 
 .title {
   text-align: center;
   font-size: 50px;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
+  font-family: serif;
+  color: rgb(59, 103, 79); 
+  letter-spacing: 2px;  
 }
+
 
 .chatbot-toggler {
   align-items: center;
