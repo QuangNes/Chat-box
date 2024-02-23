@@ -28,13 +28,36 @@
 }
 
 
+
 .title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes type-text {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.text-title {
   text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+
+  color: rgb(0, 8, 4); 
+  font-family: "Great Vibes", cursive; 
   font-size: 50px;
-  /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
-  font-family: serif;
-  color: rgb(59, 103, 79); 
-  letter-spacing: 2px;  
+  line-height: 60px; 
+  font-weight: 600;
+  text-shadow: 0 1px 1px #fff;
+
+  animation: type-text forwards 4s infinite;
+  animation-timing-function: steps(40);
 }
 
 
