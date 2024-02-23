@@ -53,7 +53,7 @@ function App() {
     if (status === true) {
       const completion = await openai.chat.completions.create({
         messages: messages,
-        model: "ft:gpt-3.5-turbo-0613:personal::8v3ZLLUx",
+        model: process.env.REACT_APP_MODEL_ID,
       });
       setMessages(prev => [...prev, {content: completion.choices[0].message.content, role:'assistant'}]);
     }
