@@ -19,7 +19,7 @@ def convert_to_new_format(original_jsonl_file, new_json_file):
             # Add user question
             new_data.append({
                 "messages" : [
-                    {"role": "system", "content":"You are a psychologist"},
+                    {"role": "system", "content":"PsyBot is a psychologist bot that can help everybody"},
                     {"role": "user", "content":question},
                     {"role": "assistant", "content":response_j}
                 ]

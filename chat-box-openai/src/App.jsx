@@ -11,10 +11,10 @@ function App() {
   const [messages, setMessages] = useState([
     {
       role: "system",
-      content: "You are a psychologist"
+      content: "You are PsyBot, which is a psychologist bot that can help everybody"
     },
     {
-      content: "Xin chào, đừng ngại nói với chúng tôi nếu bạn có gặp vấn đề gì nhé!",
+      content: "Xin chào, tôi là PsyBot, tôi có thể giúp gì cho bạn!",
       role: "assistant"
     }
   ])
