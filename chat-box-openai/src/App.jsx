@@ -2,6 +2,9 @@ import './App.css';
 import {React, useEffect, useRef, useState} from 'react'
 import OpenAI from 'openai'
 import AtomicSpinner from 'atomic-spinner'
+import Rating from '@mui/material/Rating'
+import {Unstable_Popup as BasePopup} from '@mui/base/Unstable_Popup'
+import { styled } from '@mui/system';
 
 
 function App() {
@@ -18,6 +21,8 @@ function App() {
       role: "assistant"
     }
   ])
+  const [ratings, setRatings] = useState({})
+  const [anchor, setAnchor] = useState(null)
 
   const messagesEndRef = useRef(null)
   
@@ -43,6 +48,32 @@ function App() {
 
     setMesage("")
     setStatus(true)
+  }
+
+  const saveFeedback = (index, rating) => {
+    const feedbackedMessage = {
+      ask : messages[index - 1],
+      answer: messages[index],
+      rating
+    }
+    console.log(feedbackedMessage);
+  }
+
+  const handleRatingChange = (e, rating, index) => {
+    setAnchor(anchor ? null : e.currentTarget)
+    setTimeout(() => {
+      setAnchor(null)
+    }, 3000);
+
+    const newRating = {}
+    newRating[index] = rating
+    setRatings(prev => ({...prev, ...newRating}))
+
+    console.log(ratings, newRating);
+
+    // In this flow, we need to send rating to server and server will automaticaly re training the bot 
+    // But as this web is just a demo with FE only, I will save it to a file then 
+    saveFeedback(index, rating)
   }
 
   const scrollToBottom = () => {
@@ -96,10 +127,13 @@ function App() {
               if (message.role === 'assistant') 
               {
                 return (
-                  <li className='chat incoming' key={index}>
-                    <span className="material-symbols-outlined">logo_dev</span>
-                    <p>{message.content}</p>
-                  </li>
+                  <>
+                    <li className='chat incoming' key={index}>
+                      <span className="material-symbols-outlined">logo_dev</span>
+                      <p>{message.content}</p>
+                    </li>
+                    {index !== 1 && <Rating className='rating' key={index} value={ratings[index]} onChange={(e, rating) => handleRatingChange(e, rating, index)}></Rating>}
+                  </>
                 )
               }
               else if (message.role === "user")
@@ -123,8 +157,54 @@ function App() {
           <span id ="send-btn" className="material-symbols-outlined" onClick={sendMessage}>send</span>
         </div>
       </div>
+
+      <BasePopup  open={anchor ? 'simple-popper' : undefined} anchor={anchor}>
+        {/* <PopupBody>The content of the Popup.</PopupBody> */}
+        <PopupBody>Thanks for rating us</PopupBody>
+      </BasePopup>
     </div>
   );
 }
 
 export default App;
+
+const grey = {
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
+};
+
+const blue = {
+  200: '#99CCFF',
+  300: '#66B2FF',
+  400: '#3399FF',
+  500: '#007FFF',
+  600: '#0072E5',
+  700: '#0066CC',
+};
+
+const PopupBody = styled('div')(
+  ({ theme }) => `
+  width: max-content;
+  padding: 12px 16px;
+  margin: 8px;
+  border-radius: 8px;
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  box-shadow: ${
+    theme.palette.mode === 'dark'
+      ? `0px 4px 8px rgb(0 0 0 / 0.7)`
+      : `0px 4px 8px rgb(0 0 0 / 0.1)`
+  };
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.875rem;
+  z-index: 1;
+`,
+);
