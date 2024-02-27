@@ -5,6 +5,7 @@ import AtomicSpinner from 'atomic-spinner'
 import Rating from '@mui/material/Rating'
 import {Unstable_Popup as BasePopup} from '@mui/base/Unstable_Popup'
 import { styled } from '@mui/system';
+import axios from 'axios'
 
 
 function App() {
@@ -21,7 +22,6 @@ function App() {
       role: "assistant"
     }
   ])
-  const [ratings, setRatings] = useState({})
   const [anchor, setAnchor] = useState(null)
 
   const messagesEndRef = useRef(null)
@@ -34,7 +34,6 @@ function App() {
   }
 
   const handleChatKeyDown = (e) => {
-    console.log(e.key);
     if(e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage(e);
@@ -50,30 +49,21 @@ function App() {
     setStatus(true)
   }
 
-  const saveFeedback = (index, rating) => {
-    const feedbackedMessage = {
-      ask : messages[index - 1],
-      answer: messages[index],
-      rating
-    }
-    console.log(feedbackedMessage);
-  }
-
-  const handleRatingChange = (e, rating, index) => {
+  const handleRatingChange = (e, rating) => {
     setAnchor(anchor ? null : e.currentTarget)
     setTimeout(() => {
       setAnchor(null)
     }, 3000);
 
-    const newRating = {}
-    newRating[index] = rating
-    setRatings(prev => ({...prev, ...newRating}))
+    // // In this flow, we need to send rating to server and server will automaticaly re training the bot 
+    // // But as this web is just a demo with FE only, I will save it to a file then 
+    const feedback = {
+      rating,
+      messages
+    }
 
-    console.log(ratings, newRating);
-
-    // In this flow, we need to send rating to server and server will automaticaly re training the bot 
-    // But as this web is just a demo with FE only, I will save it to a file then 
-    saveFeedback(index, rating)
+    axios.post('http://localhost:8080/feedback', feedback)
+    console.log(feedback);
   }
 
   const scrollToBottom = () => {
@@ -132,7 +122,7 @@ function App() {
                       <span className="material-symbols-outlined">logo_dev</span>
                       <p>{message.content}</p>
                     </li>
-                    {index !== 1 && <Rating className='rating' key={index} value={ratings[index]} onChange={(e, rating) => handleRatingChange(e, rating, index)}></Rating>}
+                    {index === messages.length - 1 && index !== 1 && <Rating className='rating' onChange={handleRatingChange}></Rating>}
                   </>
                 )
               }
