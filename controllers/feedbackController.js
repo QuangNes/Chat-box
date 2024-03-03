@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 const saveFeedback = (req, res) => {
-    fs.writeFileSync('../data/feedbacks.jsonl', JSON.stringify(req.body) + "\n", {flag:"a"})
+    fs.writeFileSync('./data/feedbacks.jsonl', JSON.stringify(req.body) + "\n", {flag:"a"})
     res.status(200)
 }
 
