@@ -15,7 +15,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       role: "system",
-      content: "You are PsyBot, which is a psychologist bot that can help everybody"
+      content: "You are a psychologist"
     },
     {
       content: "Xin chào, tôi là PsyBot, tôi có thể giúp gì cho bạn!",
@@ -53,7 +53,7 @@ function App() {
     setAnchor(anchor ? null : e.currentTarget)
     setTimeout(() => {
       setAnchor(null)
-    }, 3000);
+    }, 1000);
 
     // // In this flow, we need to send rating to server and server will automaticaly re training the bot 
     // // But as this web is just a demo with FE only, I will save it to a file then 

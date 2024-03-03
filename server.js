@@ -1,8 +1,8 @@
 const express = require('express')
 const cors = require('cors')
-const fs = require('fs')
+const {addAsync} = require('@awaitjs/express')
 
-const app = express()
+const app = addAsync(express())
 const port = 8080
 
 app.use(cors())
@@ -15,11 +15,8 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.post('/feedback', (req, res) => {
-    console.log(req.body);
-    fs.writeFileSync('./data/feedbacks.jsonl', JSON.stringify(req.body) + "\n", {flag:"a"})
-    res.status(200)
-})
+app.use("/feedback", require("./routes/feedbackRoute"));
+app.use("/message", require("./routes/messageRoute"));
   
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
