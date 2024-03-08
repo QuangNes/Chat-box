@@ -1,33 +1,10 @@
 const fs = require('fs');
-const { env } = require('process');
-
-const {OpenAI} = require('openai')
+const {openai} = require('../configs/openai')
 require('dotenv').config()
 
 const inputFile = "feedbacks.jsonl";
 const outputFile = "train_feedbacks.jsonl";
 const timeFile = "last_run_time.txt";
-
-
-const initMessages = {
-    messages: [
-        {
-          role: "system",
-          content: "You are a psychologist"
-        },
-        {
-          content: "Xin chào, tôi là PsyBot, tôi có thể giúp gì cho bạn!",
-          role: "assistant"
-        }
-    ]
-}
-
-const openai = new OpenAI({apiKey:process.env.OPENAI_API_KEY});
-
-module.exports = {
-    initMessages,
-    openai
-}
 
 var id_file;
 var id_retrieve;
