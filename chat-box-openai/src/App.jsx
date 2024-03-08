@@ -1,23 +1,20 @@
-import ChatBox from './components/ChatBox';
 import './App.css';
 import {React} from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home';
+import Admin from './pages/Admin';
 
 
 function App() {
   
 
   return (
-    <div className='app'>
-      
-      <div class="two alt-two">
-        <h1>Tư Vấn Tâm Lý<br></br>
-          <span>Hỗ Trợ Bạn Trên Mọi Hành Trình</span>
-        </h1>
-      </div>
-      
-      <ChatBox></ChatBox>
-      
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/admin' element={<Admin/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

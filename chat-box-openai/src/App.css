@@ -279,3 +279,8 @@ h1 em {
       display: block;
   }
 }
+
+.upload-file-button {
+  display: flex;
+  justify-content: center;
+}
