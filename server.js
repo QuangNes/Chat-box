@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const {addAsync} = require('@awaitjs/express')
+const { retrain } = require('./data/retrain')
 
 const app = addAsync(express())
 const port = 8080
@@ -21,3 +22,7 @@ app.use("/message", require("./routes/messageRoute"));
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+const retrainInterval = setInterval(() => {
+    retrain()
+}, 24 * 60 * 60 * 1000);//check evveryday

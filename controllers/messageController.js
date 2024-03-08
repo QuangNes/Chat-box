@@ -1,4 +1,4 @@
-const { initMessages, openai } = require("../configs/openai")
+const { initMessages, openai, getModelId } = require("../configs/openai")
 
 const getInitMessages = (_, res) => {
     res.status(200).json(initMessages)
@@ -7,7 +7,7 @@ const getInitMessages = (_, res) => {
 const reply = async (req, res) => {
     const completion = await openai.chat.completions.create({
         messages: req.body,
-        model: process.env.MODEL_ID,
+        model: getModelId()
     });
 
     res.status(200).json({content: completion.choices[0].message.content, role:'assistant'})

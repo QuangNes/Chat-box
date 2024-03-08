@@ -1,42 +1,32 @@
 const fs = require('fs');
-const {openai} = require('../configs/openai')
+const {openai, updateModelId, getModelId} = require('../configs/openai');
+const path = require('path');
 require('dotenv').config()
 
-const inputFile = "feedbacks.jsonl";
-const outputFile = "train_feedbacks.jsonl";
-const timeFile = "last_run_time.txt";
+const inputFile = path.join(__dirname, "feedbacks.jsonl");
+const outputFile = path.join(__dirname, "final_test_data.jsonl");
+const timeFile = path.join(__dirname, "last_run_time.txt");
 
-var id_file;
-var id_retrieve;
-var listEvents;
-
-async function upload() {
+async function upload_file() {
     const file = await openai.files.create({
         file: fs.createReadStream(outputFile),
         purpose: 'fine-tune'
     })
-   id_file = file.id;
-   console.log(id_file);
+   return file.id;
 }
 
 
-async function run_fine_tuning_jobs (id_file){
+async function create_fine_tuning_job (file_id){
     const fineTune = await openai.fineTuning.jobs.create({ 
-        training_file: id_file ,
+        training_file: file_id ,
         model: 'gpt-3.5-turbo' });
-    id_retrieve = fineTune.id;
-    console.log(id_retrieve);
+    return fineTune.id;
 }
 
-async function run_fine_tuning_retrieve (id_retrieve){
-    const fineTune = await openai.fineTuning.jobs.retrieve(id_retrieve)
+async function retrieve_fine_tuning_job (job_id){
+    const fineTune = await openai.fineTuning.jobs.retrieve(job_id)
     listEvents = fineTune.id;
-    console.log(listEvents);
-}
-
-async function run_fine_tuning_listEvents (listEvents){
-    const fineTune = await openai.fineTuning.jobs.listEvents(listEvents)
-    console.log(fineTune);
+    return fineTune;
 }
 
 
@@ -48,12 +38,12 @@ function saveCurrentTime() {
 }
 
 // Function để kiểm tra xem đã qua 1 phút chưa
-function isOneMinutePassed(lastTime) {
+function canRetrain(lastTime) {
     const currentTime = new Date();
     const lastRunTime = new Date(lastTime);
     const elapsedTime = (currentTime - lastRunTime) / 1000; // Chuyển đổi từ mili giây sang giây
 
-    return elapsedTime >= 1209600; // Kiểm tra nếu đã qua 14 ngày
+    return elapsedTime >= 30 * 24 * 60 * 60 * 1000; // Kiểm tra nếu đã qua 30 ngày
 }
 
 // Function để đọc thời gian lần chạy trước từ file
@@ -67,16 +57,21 @@ function readLastRunTime() {
     }
 }
 
-function runProgram() {
-    fs.readFile(inputFile, 'utf8' , (err,data) => {
+function retrain() {
+    if (lastRunTime !== null && !canRetrain(lastRunTime)) {
+        console.log('Program was executed within last 30 days. Skipping...');
+        return;
+    }
+
+    fs.readFile(inputFile, 'utf8' , async (err,data) => {
         if (err) {
             console.error('Error reading file', err) ;
             return;
         }
         
+        console.log("Filtering feedbackes...");
         const lines = data.trim().split('\n');
         const modifiedFeedbacks = [];
-    
         lines.forEach(line => {
             try {
                 const feedback = JSON.parse(line);
@@ -90,8 +85,9 @@ function runProgram() {
             }
         });
     
+        console.log("Adding good feedback to train data...");
         const outputData = modifiedFeedbacks.map(feedback => JSON.stringify(feedback)).join('\n');
-        fs.writeFile(outputFile,outputData, 'utf8' ,(err) =>{
+        fs.appendFileSync(outputFile,outputData, 'utf8' ,(err) =>{
             if (err) {
                 console.error('Error writing file : ', err);
                 return;
@@ -99,34 +95,33 @@ function runProgram() {
             console.log('Modified data has been written to', outputFile);
         })
 
-        if (modifiedFeedbacks.length >= 10) {
+        console.log("Uploading file to OPENAI...");
+        const file_id = await upload_file();
 
-            console.log('outputFile contains at least 10 elements.');
-            
-            (async () => {
-                await upload(); 
-                console.log(id_file); 
-                await run_fine_tuning_jobs(id_file);
-                await run_fine_tuning_retrieve (id_retrieve);
-                await run_fine_tuning_listEvents (listEvents);
-            })();
-            
-            console.log('Program executed successfully.');
-           
-            saveCurrentTime();
+        console.log("Started retraining, please wait ...");
+        const job_id = await create_fine_tuning_job(file_id);
 
-        } else {
-            console.log('outputFile does not contain at least 10 elements.');
-        }
-
+        const fine_tuning_interval = setInterval(async () => {
+            const fine_tuning_job = await retrieve_fine_tuning_job(job_id);
+            if (fine_tuning_job.status === "succeeded") {
+                // openai.models.delete(getModelId());
+                updateModelId(fine_tuning_job.fine_tuned_model);
+                console.log("Job", job_id, fine_tuning_job.status);
+                clearInterval(fine_tuning_interval);
+            }
+            else if (fine_tuning_job.status === "failed" || fine_tuning_job.status === "cancelled") {
+                console.log("Job", job_id, fine_tuning_job.status);
+                clearInterval(fine_tuning_interval);
+            }
+            else console.log("Watting for fine tuning job", job_id);
+        }, 5 * 60 * 1000);//5 minute
+        
+        saveCurrentTime();
+        console.log('Program executed successfully.');
     });
 
 }
 
-const lastRunTime = readLastRunTime();
-
-if (lastRunTime === null || isOneMinutePassed(lastRunTime)) {
-    runProgram();
-} else {
-    console.log('Program was executed within last 14 days. Skipping...');
+module.exports = {
+    retrain
 }
