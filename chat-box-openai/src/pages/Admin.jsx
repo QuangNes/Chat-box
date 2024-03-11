@@ -23,7 +23,6 @@ function Admin() {
                 variant="contained"
                 tabIndex={-1}
                 startIcon={<CloudUploadIcon />}
-                // style={{}}
             >
                 Embed a file
                 <VisuallyHiddenInput type="file" />
@@ -47,7 +46,3 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
-
-const buttonStyle = {
-
-}

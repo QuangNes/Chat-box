@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const { initMessages, openai, getModelId } = require("../configs/openai")
 
 const getInitMessages = (_, res) => {
@@ -13,7 +15,13 @@ const reply = async (req, res) => {
     res.status(200).json({content: completion.choices[0].message.content, role:'assistant'})
 }
 
+const saveFeedback = (req, res) => {
+    fs.writeFileSync(path.join(__dirname, '../data/feedbacks.jsonl'), JSON.stringify(req.body) + "\n", {flag:"a"})
+    res.status(200)
+}
+
 module.exports = {
     getInitMessages,
-    reply
+    reply,
+    saveFeedback
 }

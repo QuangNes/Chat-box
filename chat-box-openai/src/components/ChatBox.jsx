@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import AtomicSpinner from 'atomic-spinner'
 import Rating from '@mui/material/Rating'
-import {Unstable_Popup as BasePopup} from '@mui/base/Unstable_Popup'
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup'
 import { styled } from '@mui/system';
 import axios from 'axios'
+import { API_URL } from '../configs/url';
 
-export default function ChatBox() {
-  const API_URL = "http://localhost:8080"
+export default function ChatBox({ bot }) {
+  const CHAT_API_URL = `${API_URL}${bot}`
 
   const [status, setStatus] = useState(false)
   const [showChatBox, setShowChatBox] = useState('')
@@ -22,7 +24,7 @@ export default function ChatBox() {
   }
 
   const handleChatKeyDown = (e) => {
-    if(e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage(e);
     }
@@ -31,7 +33,7 @@ export default function ChatBox() {
   const sendMessage = (e) => {
     console.log(`Sended message: ${message}`);
 
-    setMessages(prev => [...prev, {content: message, role: 'user'}])
+    setMessages(prev => [...prev, { content: message, role: 'user' }])
 
     setMesage("")
     setStatus(true)
@@ -50,7 +52,7 @@ export default function ChatBox() {
       messages
     }
 
-    axios.post(API_URL + '/feedback', feedback)
+    axios.post(CHAT_API_URL + '/feedback', feedback)
     console.log(feedback);
   }
 
@@ -60,7 +62,7 @@ export default function ChatBox() {
 
   const generateResponse = async () => {
     if (status === true) {
-      const res = await axios.post(API_URL + "/message", messages);
+      const res = await axios.post(CHAT_API_URL + "/message", messages);
 
       setMessages(prev => [...prev, res.data]);
     }
@@ -68,7 +70,7 @@ export default function ChatBox() {
   }
 
   const getInitMessages = async () => {
-    const res = await axios.get(API_URL + "/message")
+    const res = await axios.get(CHAT_API_URL + "/message")
     setMessages(res.data.messages)
   }
 
@@ -85,60 +87,62 @@ export default function ChatBox() {
   }, [])
 
   return (
-      <div className={`${showChatBox}`}>
-          <button className='chatbot-toggler' onClick={toggleChatBox}>
-              <span className="material-symbols-outlined">mode_comment</span>
-              <span className="material-symbols-outlined">close</span>
-          </button>
+    <div className={`${showChatBox}`}>
+      <button className='chatbot-toggler' onClick={toggleChatBox}>
+        <span className="material-symbols-outlined">mode_comment</span>
+        <span className="material-symbols-outlined">close</span>
+      </button>
 
-          <div className="chatbot">
-          <header>
-              <h2>Chatbot</h2>
-              <span className="close-btn material-symbols-outlined">close</span>
-          </header>
-          
-          <ul className="chatbox">
-              {
-              messages.map((message, index) => {
-                  if (message.role === 'assistant') 
-                  {
-                  return (
-                      <>
-                      <li className='chat incoming' key={index}>
-                          <span className="material-symbols-outlined">logo_dev</span>
-                          <p>{message.content}</p>
-                      </li>
-                      {index === messages.length - 1 && index !== 1 && <Rating className='rating' onChange={handleRatingChange}></Rating>}
-                      </>
-                  )
-                  }
-                  else if (message.role === "user")
-                  {
-                  return (
-                      <li className='chat outgoing' key={index}>
+      <div className="chatbot">
+        <header>
+          <h2>Chatbot</h2>
+          <span className="close-btn material-symbols-outlined">close</span>
+        </header>
+
+        <ul className="chatbox">
+          {
+            messages.map((message, index) => {
+              if (message.role === 'assistant') {
+                return (
+                  <>
+                    <li className='chat incoming' key={index}>
+                      <span className="material-symbols-outlined">logo_dev</span>
                       <p>{message.content}</p>
-                      </li>
-                  )
-                  }
-              })
+                    </li>
+                    {index === messages.length - 1 && index !== 1 && <Rating className='rating' onChange={handleRatingChange}></Rating>}
+                  </>
+                )
               }
-              { status && <li className='chat incoming'>
-              <span className="material-symbols-outlined">logo_dev</span>
-              <AtomicSpinner atomSize={30}/>
-              </li>}
-              <div ref={messagesEndRef}></div>
-          </ul>
-              <div className="chat-input">
-                  <textarea value={message} onChange={(e) => setMesage(e.currentTarget.value)} onKeyDown={handleChatKeyDown} placeholder="Enter a message..." required></textarea>
-                  <span id ="send-btn" className="material-symbols-outlined" onClick={sendMessage}>send</span>
-              </div>
-          </div>
-
-          <BasePopup  open={anchor ? 'simple-popper' : undefined} anchor={anchor}>
-              <PopupBody>Thanks for rating us</PopupBody>
-          </BasePopup>
+              else if (message.role === "user") {
+                return (
+                  <li className='chat outgoing' key={index}>
+                    <p>{message.content}</p>
+                  </li>
+                )
+              }
+            })
+          }
+          {status && <li className='chat incoming'>
+            <span className="material-symbols-outlined">logo_dev</span>
+            <AtomicSpinner atomSize={30} />
+          </li>}
+          <div ref={messagesEndRef}></div>
+        </ul>
+        <div className="chat-input">
+          <textarea value={message} onChange={(e) => setMesage(e.currentTarget.value)} onKeyDown={handleChatKeyDown} placeholder="Enter a message..." required></textarea>
+          <span id="send-btn" className="material-symbols-outlined" onClick={sendMessage}>send</span>
+        </div>
       </div>
+
+      <BasePopup open={anchor ? 'simple-popper' : undefined} anchor={anchor}>
+        <PopupBody>Thanks for rating us</PopupBody>
+      </BasePopup>
+    </div>
   );
+}
+
+ChatBox.propTypes = {
+  bot: PropTypes.string.isRequired
 }
 
 const grey = {
@@ -154,15 +158,6 @@ const grey = {
   900: '#1C2025',
 };
 
-const blue = {
-  200: '#99CCFF',
-  300: '#66B2FF',
-  400: '#3399FF',
-  500: '#007FFF',
-  600: '#0072E5',
-  700: '#0066CC',
-};
-
 const PopupBody = styled('div')(
   ({ theme }) => `
   width: max-content;
@@ -171,11 +166,10 @@ const PopupBody = styled('div')(
   border-radius: 8px;
   border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
   background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  box-shadow: ${
-    theme.palette.mode === 'dark'
+  box-shadow: ${theme.palette.mode === 'dark'
       ? `0px 4px 8px rgb(0 0 0 / 0.7)`
       : `0px 4px 8px rgb(0 0 0 / 0.1)`
-  };
+    };
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   z-index: 1;
