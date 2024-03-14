@@ -11,7 +11,7 @@ export default function ChatBox({ bot }) {
   const CHAT_API_URL = `${API_URL}${bot}`
 
   const [status, setStatus] = useState(false)
-  const [showChatBox, setShowChatBox] = useState('')
+  const [showChatBox, setShowChatBox] = useState('show-chatbot')
   const [message, setMesage] = useState('')
   const [messages, setMessages] = useState([])
   const [anchor, setAnchor] = useState(null)

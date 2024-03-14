@@ -1,11 +1,18 @@
 import '../App.css';
-import {React} from 'react'
+import {React, useState} from 'react'
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
+/* Test API */
 
 function Admin() {
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handeFileSubmit = (e) => {
+    console.log(e.target)
+  }
   
   return (
     <div className='app'>
@@ -25,7 +32,7 @@ function Admin() {
                 startIcon={<CloudUploadIcon />}
             >
                 Embed a file
-                <VisuallyHiddenInput type="file" />
+                <VisuallyHiddenInput type="file" accept='.pdf' onChange={handeFileSubmit}/>
             </Button>
         </div>
 
