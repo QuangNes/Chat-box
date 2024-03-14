@@ -7,3 +7,13 @@ https://huggingface.co/datasets/roneneldan/TinyStories
 https://huggingface.co/datasets/codeparrot/apps/viewer/all/train
 https://huggingface.co/datasets/camel-ai/physics
 https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned
+
+References:
+- PDF Loading: https://js.langchain.com/docs/integrations/document_loaders/file_loaders/pdf
+- TextSplitter: https://js.langchain.com/docs/modules/data_connection/document_transformers/recursive_text_splitter
+- We can also load and split at the same time: https://api.js.langchain.com/classes/langchain_document_loaders_fs_pdf.PDFLoader.html#loadAndSplit
+- Embeding: https://js.langchain.com/docs/integrations/text_embedding/openai
+- Embeding with Vector store: https://js.langchain.com/docs/integrations/vectorstores/faiss#setup
+- How to save to local: https://js.langchain.com/docs/integrations/vectorstores/faiss#save-an-index-to-file-and-load-it-again
+- How to cache: https://js.langchain.com/docs/modules/data_connection/text_embedding/caching_embeddings
+- Conducting conversational question-answering tasks with a retrieval component - Embeding VectorStore: https://api.js.langchain.com/classes/langchain_chains.ConversationalRetrievalQAChain.html
