@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {openai, getFineTuningModelName, updateFineTuningModelName} = require('../configs/openai');
+const {openai, getFineTuningModelName, updateFineTuningModelName} = require('../utils/openai');
 const path = require('path');
 require('dotenv').config()
 
