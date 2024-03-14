@@ -41,21 +41,11 @@ const chatOpenAI = new ChatOpenAI({
   modelName: getFineTuningModelName()
 })
 
-const getChatOpenAI = () => {
-  if (chatOpenAI.modelName !== getFineTuningModelName()){
-    chatOpenAI = new ChatOpenAI({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-      modelName: getFineTuningModelName()
-    })
-  }
-  return chatOpenAI;
-}
-
 module.exports = {
     openai,
     openAIEmbeding,
+    chatOpenAI,
     getInitMessages,
     getFineTuningModelName,
     updateFineTuningModelName,
-    getChatOpenAI
 }
