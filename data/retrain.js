@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {openai, updateModelId, getModelId} = require('../configs/openai');
+const {openai, getFineTuningModelName, updateFineTuningModelName} = require('../configs/openai');
 const path = require('path');
 require('dotenv').config()
 
@@ -105,7 +105,7 @@ function retrain() {
             const fine_tuning_job = await retrieve_fine_tuning_job(job_id);
             if (fine_tuning_job.status === "succeeded") {
                 // openai.models.delete(getModelId());
-                updateModelId(fine_tuning_job.fine_tuned_model);
+                updateFineTuningModelName(fine_tuning_job.fine_tuned_model);
                 console.log("Job", job_id, fine_tuning_job.status);
                 clearInterval(fine_tuning_interval);
             }
