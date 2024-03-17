@@ -17,8 +17,8 @@ const reply = async (req, res) => {
 }
 
 const saveFeedback = (req, res) => {
-    fs.writeFile(path.join(__dirname, '../data/feedbacks.jsonl'), JSON.stringify(req.body) + "\n", {flag:"a"})
-    res.status(200)
+    fs.writeFile(path.join(__dirname, '../data/feedbacks.jsonl'), JSON.stringify(req.body) + "\n", {flag:"a"}, (err) => {console.log(err);})
+    res.status(200);
 }
 
 module.exports = {
