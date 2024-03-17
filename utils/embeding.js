@@ -9,6 +9,7 @@ const { openAIEmbeding, chatOpenAI } = require('./openai');
 const VECTORSTORE_PATH = path.join(__dirname, '../data/VectorStore');
 
 let chain = null;
+let vectorStore = null;
 
 const loadDocuments = async () => {
     const directoryLoader = new DirectoryLoader(
@@ -41,11 +42,13 @@ const loadDocuments = async () => {
 }
 
 const loadVectorStores = async (reload = false) => {
-    let vectorStore = null;
+    if (!reload && vectorStore) {
+        return vectorStore;
+    }
     if (reload) {
         const docs = await loadDocuments()
     
-        console.log('Loading vectorstore from embeding documents');
+        console.log('Loading vectorstore from embeding documents...');
         vectorStore = await FaissStore.fromDocuments(
             docs,
             openAIEmbeding
@@ -54,7 +57,7 @@ const loadVectorStores = async (reload = false) => {
         vectorStore.save(VECTORSTORE_PATH);
     }
     else {
-        console.log('Loading vectorstore from local');
+        console.log('Loading vectorstore from local...');
         try {
             vectorStore = await FaissStore.load(
                 VECTORSTORE_PATH,
@@ -74,6 +77,7 @@ const loadVectorStores = async (reload = false) => {
 const getChain = async () => {
     const vectorStore = await loadVectorStores();
     if (!chain) {
+        console.log("Loading ConversationalRetrievalQAChain...");
         chain = ConversationalRetrievalQAChain.fromLLM(
             chatOpenAI,
             vectorStore.asRetriever()

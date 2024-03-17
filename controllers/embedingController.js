@@ -21,8 +21,14 @@ const saveFeedback = (req, res) => {
     res.status(200)
 }
 
+const addDocuments = (req, res) => {
+    console.log(req);
+    res.status(200);
+}
+
 module.exports = {
     getInitMessages,
     reply,
-    saveFeedback
+    saveFeedback,
+    addDocuments
 }
